@@ -1,0 +1,22 @@
+{
+    "name": "cordova-plugin-appcontacts",
+    "version": "1.0.0",
+    "description": "A Cordova plugin to fetch contacts from iOS and Android devices.",
+    "cordova": {
+        "id": "cordova-plugin-appcontacts",
+        "platforms": [
+            "android",
+            "ios"
+        ]
+    },
+    "keywords": [
+        "cordova",
+        "plugin",
+        "contacts",
+        "ecosystem:cordova",
+        "cordova-ios",
+        "cordova-android"
+    ],
+    "author": "Your Name",
+    "license": "Apache-2.0"
+}

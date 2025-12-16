@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-appcontacts" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>AppContacts</name>
+    <js-module name="AppContacts" src="www/AppContacts.js">
+        <clobbers target="window.AppContacts" />
+    </js-module>
+    
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="AppContacts">
+                <param name="ios-package" value="AppContacts" />
+            </feature>
+        </config-file>
+        
+        <source-file src="src/ios/AppContacts.swift" />
+        
+        <config-file target="*-Info.plist" parent="NSContactsUsageDescription">
+            <string>We need access to your contacts to fetch and display them.</string>
+        </config-file>
+        
+        <framework src="Contacts.framework" />
+    </platform>
+    
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="AppContacts">
+                <param name="android-package" value="com.trackster.appcontacts.AppContacts" />
+            </feature>
+        </config-file>
+        
+        <source-file src="src/android/AppContacts.java" target-dir="src/com/trackster/appcontacts" />
+        
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_CONTACTS" />
+        </config-file>
+    </platform>
+</plugin>
