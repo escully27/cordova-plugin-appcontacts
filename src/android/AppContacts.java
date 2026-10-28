@@ -69,7 +69,7 @@ public class AppContacts extends CordovaPlugin {
                 fetchContacts();
             } else {
                 // Permission denied
-                this.callbackContext.error("Permission denied to access contacts.");
+                sendContactsResult("denied", new JSONArray(), "Permission denied to access contacts.");
             }
         }
     }
@@ -154,17 +154,31 @@ public class AppContacts extends CordovaPlugin {
                     }
                 } while (cursor.moveToNext());
 
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, contactsArray);
-                callbackContext.sendPluginResult(pluginResult);
+                sendContactsResult("granted", contactsArray, null);
 
             } catch (Exception e) {
-                callbackContext.error("An error occurred while fetching contacts: " + e.getMessage());
+                sendContactsResult("error", new JSONArray(), "An error occurred while fetching contacts: " + e.getMessage());
             } finally {
                 cursor.close();
             }
         } else {
-            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, contactsArray);
+            sendContactsResult("granted", contactsArray, null);
+        }
+    }
+
+    private void sendContactsResult(String status, JSONArray contacts, String message) {
+        try {
+            JSONObject result = new JSONObject();
+            result.put("status", status);
+            result.put("contacts", contacts);
+            if (message != null) {
+                result.put("message", message);
+            }
+
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
             callbackContext.sendPluginResult(pluginResult);
+        } catch (JSONException e) {
+            callbackContext.error(e.getMessage());
         }
     }
 }

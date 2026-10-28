@@ -12,15 +12,15 @@ class AppContacts: CDVPlugin {
         
         switch status {
         case .authorized:
-            statusString = "authorized"
+            statusString = "granted"
         case .denied:
             statusString = "denied"
         case .notDetermined:
-            statusString = "not-determined"
+            statusString = ""
         case .restricted:
-            statusString = "restricted"
+            statusString = "denied"
         @unknown default:
-            statusString = "unknown"
+            statusString = ""
         }
         
         let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: statusString)
@@ -61,7 +61,12 @@ class AppContacts: CDVPlugin {
         store.requestAccess(for: .contacts) { (granted, error) in
             guard granted else {
                 // Handle denied permission
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Permission denied to access contacts.")
+                let payload: [String: Any] = [
+                    "status": "denied",
+                    "contacts": [],
+                    "message": error?.localizedDescription ?? "Permission denied to access contacts."
+                ]
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: payload)
                 self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                 return
             }
@@ -116,11 +121,20 @@ class AppContacts: CDVPlugin {
                     }
                     
                     // Return the contacts as a JSON array
-                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: allContacts)
+                    let payload: [String: Any] = [
+                        "status": "granted",
+                        "contacts": allContacts
+                    ]
+                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: payload)
                     self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                     
                 } catch {
-                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
+                    let payload: [String: Any] = [
+                        "status": "error",
+                        "contacts": [],
+                        "message": error.localizedDescription
+                    ]
+                    let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: payload)
                     self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
                 }
             }
